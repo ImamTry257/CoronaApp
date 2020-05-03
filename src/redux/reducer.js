@@ -12,7 +12,7 @@ const initialHome = {
         meninggal: '',
     },
     isLoading: true,
-    respCorona: [],
+    runChangeButtonColor: false,
 }
 
 const HomeReducer = (state = initialHome, action) => {
@@ -28,6 +28,16 @@ const HomeReducer = (state = initialHome, action) => {
         return {
             ...state,
             isLoading: action.data
+        }
+    }
+
+    if(action.type == 'SET_KEYWORD'){
+        return {
+            ...state,
+            form: {
+                ...state.form,
+                keyword: action.data
+            }
         }
     }
     return state

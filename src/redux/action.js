@@ -15,3 +15,12 @@ export const setLoading = (run, setLoad) => {
         };
     }
 }
+
+export const setKeyword = (run, keyword) => {
+    if(run == true){
+        return {
+            type: 'SET_KEYWORD',
+            data: keyword,
+        };
+    }
+}

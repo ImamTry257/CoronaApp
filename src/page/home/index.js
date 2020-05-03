@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { Image, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { ActivityIndicator, Text, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { homeImg } from '../../assets';
-import { setDataCorona, setLoading } from '../../redux';
+import { Searching } from '../../components';
+import { setDataCorona, setKeyword, setLoading } from '../../redux';
 import InfoData from '../info';
 import HeaderHome from './headerHome';
-import { Searching } from '../../components';
 
 
 const Home = ({navigation, onPress}) => {
@@ -16,7 +16,8 @@ const Home = ({navigation, onPress}) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        // console.log('reload Home Page')
+        console.log('reload Home Page')
+        console.log(HomeState)
 
         // set loading
         dispatch(setLoading(true, true))
@@ -29,12 +30,38 @@ const Home = ({navigation, onPress}) => {
             dispatch(setLoading(true, false)),
         )
         .catch((error) => console.error(error))
-        .finally(() => console.log('berhasil'));
+        .finally(() => console.log('getting data berhasil'));
 
     }, [])
 
     const goTo = () => {
         navigation.navigate("Detail")
+    }
+
+    const senData = () => {
+        // getting data
+        fetch('https://api.kawalcorona.com/indonesia/provinsi/')
+        .then((response) => response.json())
+        .then((json) =>
+            console.log(json)
+        )
+        .catch((error) => console.error(error))
+        .finally(() => console.log('getting data berhasil'));
+    }
+
+    const onInputChange = (data) => {
+
+        // change color button 
+        if(data != ''){
+            HomeState.runChangeButtonColor = true
+        }else{
+            HomeState.runChangeButtonColor = false
+        }
+
+        // set keyword
+        dispatch(setKeyword(true, data))
+
+        console.log(HomeState)
     }
 
     return (
@@ -43,7 +70,13 @@ const Home = ({navigation, onPress}) => {
             <HeaderHome img={homeImg} title={HomeState.titlePage} />
             
             {/* Searching Section */}
-            <Searching title={HomeState.titleSearch} onPressProps={() => {goTo()}} />
+            <Searching 
+                title={HomeState.titleSearch} 
+                onPressProps={() => {senData()}}
+                inputChange={(data) => {onInputChange(data)}}
+                value={HomeState.form}
+                changeButtonColor={HomeState.runChangeButtonColor}
+            />
 
             {/* Data Section */}
             {HomeState.isLoading ? <ActivityIndicator style={{marginTop: 10}}/> : (
